@@ -1,4 +1,4 @@
-# k-metat-taf
+# k-metar-taf
 
 [![Latest Release](https://img.shields.io/github/v/tag/kalisio/k-metar-taf?sort=semver&label=latest)](https://github.com/kalisio/k-metar-taf/releases)
 [![Build Status](https://travis-ci.com/kalisio/k-metar-taf.png?branch=master)](https://travis-ci.com/kalisio/k-metar-taf)
