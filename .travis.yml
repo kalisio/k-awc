@@ -22,14 +22,14 @@ script:
      IMAGE_TAG=$(node -p -e "require('./package.json').version")
      KRAWLER_TAG=$(node -p -e "require('./package.json').peerDependencies['@kalisio/krawler']")
    fi
-   docker build --build-arg KRAWLER_TAG=$KRAWLER_TAG --build-arg SERVICE=metar -f dockerfile -t ${IMAGE_NAME}-observations:$IMAGE_TAG .
-   docker build --build-arg KRAWLER_TAG=$KRAWLER_TAG --build-arg SERVICE=taf -f dockerfile -t ${IMAGE_NAME}-forecasts:$IMAGE_TAG .
+   docker build --build-arg KRAWLER_TAG=$KRAWLER_TAG --build-arg SERVICE=metar -f dockerfile -t k-metar:$IMAGE_TAG .
+   docker build --build-arg KRAWLER_TAG=$KRAWLER_TAG --build-arg SERVICE=taf -f dockerfile -t k-taf:$IMAGE_TAG .
 
 before_deploy:
   - docker login -u="$DOCKER_USER" -p="$DOCKER_PASSWORD"
 
 deploy:
   provider: script
-  script: docker push $IMAGE_NAME-observations:$IMAGE_TAG && docker push $IMAGE_NAME-forecasts:$IMAGE_TAG
+  script: docker push k-metar:$IMAGE_TAG && docker push k-taf:$IMAGE_TAG
   on:
     all_branches: true
