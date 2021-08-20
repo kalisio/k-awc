@@ -29,8 +29,11 @@ script:
    docker build --build-arg KRAWLER_TAG=$KRAWLER_TAG --build-arg SERVICE=taf -f dockerfile -t k-taf:${IMAGE_TAG} .
    docker images
 
+before_deploy:
+  - docker login -u="$DOCKER_USER" -p="$DOCKER_PASSWORD"
+
 deploy:
   provider: script
-  script: docker push k-metar:${IMAGE_TAG} && docker push k-taf:${IMAGE_TAG}
+  script: echo ${IMAGE_TAG} && docker push k-metar:${IMAGE_TAG} && docker push k-taf:${IMAGE_TAG}
   on:
     all_branches: true
