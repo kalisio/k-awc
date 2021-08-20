@@ -12,9 +12,6 @@ notifications:
     on_success: always
     on_failure: always  
 
-before_script:
-  - docker login -u="$DOCKER_USER" -p="$DOCKER_PASSWORD"
-
 script:
   - |
    IMAGE_NAME="$TRAVIS_REPO_SLUG"
@@ -35,6 +32,6 @@ before_deploy:
 deploy:
   skip_cleanup: true
   provider: script
-  script: echo ${IMAGE_TAG} && docker push k-metar:${IMAGE_TAG} && docker push k-taf:${IMAGE_TAG}
+  script: docker images && ${IMAGE_TAG} && docker push k-metar:${IMAGE_TAG} && docker push k-taf:${IMAGE_TAG}
   on:
     all_branches: true
