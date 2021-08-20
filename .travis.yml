@@ -33,6 +33,7 @@ before_deploy:
   - docker login -u="$DOCKER_USER" -p="$DOCKER_PASSWORD"
 
 deploy:
+  skip_cleanup: true
   provider: script
   script: echo ${IMAGE_TAG} && docker push k-metar:${IMAGE_TAG} && docker push k-taf:${IMAGE_TAG}
   on:
