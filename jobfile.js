@@ -114,6 +114,7 @@ module.exports = {
             mapping: {
               [timePath]: { path: 'time', delete: false },
               'id': 'properties.dataId',
+              'properties.site': 'properties.name',
               'properties.temp': 'properties.temperature',
               'properties.dewp': 'properties.dewpointTemperature',
               'properties.wspd': 'properties.windSpeed',
