@@ -201,9 +201,20 @@ module.exports = {
           indices: [
             [{ time: 1, 'properties.dataId': 1 }, { unique: true }],
             { 'properties.temperature': 1 },
-            { 'properties.dewp': 1 },
+            { 'properties.dewppointTemperature': 1 },
+            { 'properties.windSpeed': 1 },
+            { 'properties.windDirection': 1 },
+            { 'properties.windGust': 1 },
+            { 'properties.cloudCover': 1 },
+            { 'properties.visibility': 1 },
             { 'properties.dataId': 1, 'properties.temperature': 1, time: -1 },
-            { 'properties.dataId': 1, 'properties.dewp': 1, time: -1 },
+            { 'properties.dataId': 1, 'properties.dewppointTemperature': 1, time: -1 },
+            { 'properties.dataId': 1, 'properties.temperature': 1, time: -1 },
+            { 'properties.dataId': 1, 'properties.windSpeed': 1, time: -1 },
+            { 'properties.dataId': 1, 'properties.windDirection': 1, time: -1 },
+            { 'properties.dataId': 1, 'properties.windGust': 1, time: -1 },
+            { 'properties.dataId': 1, 'properties.cloudCover': 1, time: -1 },
+            { 'properties.dataId': 1, 'properties.visibility': 1, time: -1 },
             [{ time: 1 }, { expireAfterSeconds: ttl }], // days in s
             { geometry: '2dsphere' }                                                                                                              
           ],

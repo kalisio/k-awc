@@ -25,7 +25,7 @@ The job is executed according a specific cron expression. By default, every hour
 | `DB_URL` | The mongoDB database URL. The default value is `mongodb://127.0.0.1:27017/metar-taf` |
 | `TTL` | The data time to live. It must be expressed in seconds and the default value is `604 800` (7 days) |
 | `DATA` | The data to be scrapped. It must be either `metar` or `taf`. The default value is `metar` |
-| `FOOTPRINT` | Writes the footprint of the different queries as a **GeoJSON** file. By default it is undefined. |
+| `FOOTPRINT` | Writes the footprint of the different queries as a **GeoJSON** file. Th edefault value is `false`. |
 | `DEBUG` | Enables debug output. Set it to `krawler*` to enable full output. By default it is undefined. |
 
 ## Deployment
