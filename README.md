@@ -1,7 +1,7 @@
 # k-metar-taf
 
 [![Latest Release](https://img.shields.io/github/v/tag/kalisio/k-metar-taf?sort=semver&label=latest)](https://github.com/kalisio/k-metar-taf/releases)
-[![Build Status](https://travis-ci.com/kalisio/k-metar-taf.png?branch=master)](https://travis-ci.com/kalisio/k-metar-taf)
+[![Build Status](https://app.travis-ci.com/kalisio/k-metar-taf.svg?branch=master)](https://app.travis-ci.com/kalisio/k-metar-taf)
 
 A [Krawler](https://kalisio.github.io/krawler/) based service to download [METAR](https://en.wikipedia.org/wiki/METAR) and [TAF](https://en.wikipedia.org/wiki/Terminal_aerodrome_forecast) data from the [Aviation Weather Center](https://www.aviationweather.gov/).
 
@@ -25,7 +25,7 @@ The job is executed according a specific cron expression. By default, every hour
 | `DB_URL` | The mongoDB database URL. The default value is `mongodb://127.0.0.1:27017/metar-taf` |
 | `TTL` | The data time to live. It must be expressed in seconds and the default value is `604 800` (7 days) |
 | `DATA` | The data to be scrapped. It must be either `metar` or `taf`. The default value is `metar` |
-| `BBOX` | The spatial extention for area of interest. The default value is `-180,-90,180,90` |  
+| `FOOTPRINT` | Writes the footprint of the different queries as a **GeoJSON** file. By default it is undefined. |
 | `DEBUG` | Enables debug output. Set it to `krawler*` to enable full output. By default it is undefined. |
 
 ## Deployment

@@ -1,14 +1,63 @@
+const krawler = require('@kalisio/krawler')
+const hooks = krawler.hooks
 const _ = require('lodash')
+const fs = require('fs')
+const path = require('path')
 
 const dbUrl = process.env.DB_URL || 'mongodb://127.0.0.1:27017/metar-taf'
 const ttl = +process.env.TTL || (7 * 24 * 60 * 60)  // duration in seconds
-const bbox = process.env.BBOX || '-180,-90,180,90'
 const data = process.env.DATA || 'metar'
+const footprint = process.env.FOOTPRINT || false
 
 // computed var
 const script = _.capitalize(data) + 'JSON.php'
 const collection = data === 'metar' ? 'observations' : 'forecasts'
 const timePath = data === 'metar' ? 'properties.obsTime' : 'properties.issueTime'
+
+// Create a custom hook to generate tasks
+let generateTasks = (options) => {
+  return (hook) => {
+    let footprint = {
+      type: 'FeatureCollection',
+      'features': [] 
+    }
+    let tasks = []
+    _.forEach(options.grids, grid => {
+      const cellWidth = (grid.bbox[2] - grid.bbox[0]) / grid.columns
+      const cellHeight = (grid.bbox[3] - grid.bbox[1]) / grid.rows
+      for (let i = 0; i < grid.columns; i++) {
+        for (let j = 0; j < grid.rows; j++) {
+          const east=grid.bbox[0] + (i * cellWidth)
+          const south=grid.bbox[1] + (j * cellHeight)
+          const west=east + cellWidth
+          const north=south + cellHeight
+          footprint.features.push({
+            type: 'Feature',
+            properties: {},
+            geometry: {
+              type: 'Polygon',
+              coordinates: [
+                [ [east, south], [west, south], [west, north], [east, north], [east, south] ]
+              ]
+            } 
+          })
+          console.log(`Task created for the bbox=${east},${south},${west},${north}`)
+          let task = {
+            options: {
+              url: `https://www.aviationweather.gov/cgi-bin/json/${script}?priority=8&bbox=${east},${south},${west},${north}`
+            }
+          }
+          tasks.push(task)
+        }
+      }
+    })
+    // fs.writeFileSync('footprint.geojson', JSON.stringify(footprint, null, 4))
+    hook.data.tasks = tasks
+    hook.data.footprint = footprint
+    return hook
+  }
+}
+hooks.registerHook('generateTasks', generateTasks)
 
 module.exports = {
   id: 'metar-taf',
@@ -16,13 +65,10 @@ module.exports = {
   options: {
     workersLimit: 1
   },
-  tasks: [{
-    id: 'metar-taf',
-    type: 'http',
-    options: {
-      url: `https://www.aviationweather.gov/cgi-bin/json/${script}?bbox=${bbox}`
-    }
-  }],
+  taskTemplate: {
+    id: 'metar-taf/<%= taskId %>',
+    type: 'http'
+  },
   hooks: {
     tasks: {
       before: {
@@ -57,7 +103,7 @@ module.exports = {
               })
               if (existingData === undefined) newData.push(feature)
             })
-            console.log('Found ' + newData.length + ' new data')
+            console.log(newData.length + ' new data found')
             item.data = newData
           }
         },
@@ -68,6 +114,13 @@ module.exports = {
             mapping: {
               [timePath]: { path: 'time', delete: false },
               'id': 'properties.dataId',
+              'properties.temp': 'properties.temperature',
+              'properties.dewp': 'properties.dewpointTemperature',
+              'properties.wspd': 'properties.windSpeed',
+              'properties.wdir': 'properties.windDirection',
+              'properties.wgst': 'properties.windGust',
+              'properties.cover': 'properties.cloudCover',
+              'properties.visib': 'properties.visibility',
               'properties.id': 'properties.icao'
             },
             omit: [
@@ -86,7 +139,6 @@ module.exports = {
             omit: [ 
               'time',
               'properties.dataId',
-              'properties.prior',
               'properties.obsTime',
               'properties.issueTime',
               'properties.validTimeFrom',
@@ -94,21 +146,26 @@ module.exports = {
               'properties.validTime',
               'properties.timeGroup',
               'properties.fcstType',              
-              'properties.temp', 
-              'properties.dewp', 
-              'properties.wspd', 
-              'properties.wdir',
+              'properties.temperature',
+              'properties.dewpointTemperature', 
+              'properties.windSpeed', 
+              'properties.windDirection',
+              'properties.windGust',
               'properties.ceil',
-              'properties.cover',
+              'properties.cloudCover',
+              'properties.cldType1',
               'properties.cldCvg1',
               'properties.cldBas1',
+              'properties.cldType2',
               'properties.cldCvg2',
               'properties.cldBas2',
+              'properties.cldType3',
               'properties.cldCvg3',
               'properties.cldBas3',
+              'properties.cldType4',
               'properties.cldCvg4',
               'properties.cldBas4',
-              'properties.visib',
+              'properties.visibility',
               'properties.fltcat',
               'properties.altim',
               'properties.slp',
@@ -123,7 +180,15 @@ module.exports = {
     },
     jobs: {
       before: {
-        createStores: [{ id: 'memory' }],
+        createStores: [
+          { id: 'memory' },
+          { 
+            id: 'fs', 
+            options: { 
+              path: path.join(__dirname, '..', 'output') 
+            } 
+          }
+        ],
         connectMongo: {
           url: dbUrl,
           // Required so that client is forwarded from job to tasks
@@ -135,9 +200,9 @@ module.exports = {
           collection: 'metar-taf-' + collection,
           indices: [
             [{ time: 1, 'properties.dataId': 1 }, { unique: true }],
-            { 'properties.temp': 1 },
+            { 'properties.temperature': 1 },
             { 'properties.dewp': 1 },
-            { 'properties.dataId': 1, 'properties.temp': 1, time: -1 },
+            { 'properties.dataId': 1, 'properties.temperature': 1, time: -1 },
             { 'properties.dataId': 1, 'properties.dewp': 1, time: -1 },
             [{ time: 1 }, { expireAfterSeconds: ttl }], // days in s
             { geometry: '2dsphere' }                                                                                                              
@@ -151,19 +216,41 @@ module.exports = {
             [{ 'properties.icao': 1 }, { unique: true }],
             { geometry: '2dsphere' }                                                                                                              
           ]
+        },
+        generateTasks: {
+          grids: [
+            { bbox: [-180, -80, 180, -40], columns: 2, rows: 1 },
+            { bbox: [-180, -40, 180, 20], columns: 6, rows: 3 },
+            { bbox: [-180, 20, -130, 60], columns: 1, rows: 2 },
+            { bbox: [-130, 20, -60, 30], columns: 4, rows: 1 },
+            { bbox: [-130, 30, -60, 50], columns: 8, rows: 4 },
+            { bbox: [-130, 50, -60, 60], columns: 4, rows: 1 },
+            { bbox: [-60, 20, 0, 60], columns: 1, rows: 2 },
+            { bbox: [0, 20, 60, 40], columns: 4, rows: 2 },
+            { bbox: [0, 40, 30, 60], columns: 4, rows: 4 },
+            { bbox: [30, 40, 60, 60], columns: 2, rows: 2 },
+            { bbox: [60, 20, 90, 60], columns: 1, rows: 4 },
+            { bbox: [90, 20, 180, 60], columns: 3, rows: 2 },
+            { bbox: [-180, 60, 180, 90], columns: 2, rows: 1 }
+          ]
         }
       },
       after: {
+        writeJson: {
+          match: { predicate: () => { return footprint === true } },
+          dataPath: 'data.footprint',
+          store: 'fs'
+        },
         disconnectMongo: {
           clientPath: 'taskTemplate.client'
         },
-        removeStores: ['memory']
+        removeStores: ['memory', 'fs']
       },
       error: {
         disconnectMongo: {
           clientPath: 'taskTemplate.client'
         },
-        removeStores: ['memory']
+        removeStores: ['memory', 'fs']
       }
     }
   }

@@ -3,6 +3,7 @@ node_js:
 - '12'
 services:
 - docker
+
 notifications:
   email: false
   slack:
@@ -10,8 +11,10 @@ notifications:
       secure: aOIwPRSZnTridwzqAYY9vmliuBARB2Fe0OtGBNtre2Fv9JUk3xjAIkeGHx/pmjs7lPxDgTsw63NwLFS1E+9ueX2Z3LoXIFeDcR9FX1mZQks7AdsHcY4G8B4HOkZg1zrKCJobFRCpLtyhHonwMvVT2ggl/QEbihD332iJT8FTlyXJy+2a7HMwlFyjNlCuhZluWMRceysT5E/1vmGtB3p8OuUhzZcqxHUIHccZRmZLhGKCn5y8VS+Q5nVSFW41Om3sbSRRKqbUVNPyY6iLwmcsSiYPKHSJdBirOoOBSWNmntGqKdUp9rxlpSvcmiNCW4CnTyY7AaDWRVoNXIOF0yUL2xIky+1LjiDof0pEZIe/M1XPlm2vNJDHuO7vx/hCnrq8pxu6fri4dy0LL6pjt3+rt04b8oTIp1iavf/i0foXr42xkcv18LIFRiJTzUtthH23FWWWx4pXJf86MI4uEAC6zJutOZpCS/g1GZ007gKWna/ifC03ZmtLe1s7PhrqLe/whwv6MkDNOn3ADdi0Tfy3VGic7FI28zApXAIZ9yvcgP8KLXRmzMCkFoI/m8sQ6+jSrfOxFIA9Wv1JGDVZ9gSrRX+fz1IeLg2XI4gP0JchmhGaPKc3BfJqQG3kWF45p/VyO8v4KnklXVe/hzJSbjTaAxR2tIboD7L2JuP/Bcgi/nI=
     on_success: always
     on_failure: always
+
 before_script:
 - docker login -u="$DOCKER_USER" -p="$DOCKER_PASSWORD"
+
 script:
 - |
   IMAGE_NAME="$TRAVIS_REPO_SLUG"
@@ -24,6 +27,7 @@ script:
   fi
   docker build --build-arg KRAWLER_TAG=$KRAWLER_TAG -f dockerfile.metar -t kalisio/k-metar:${IMAGE_TAG} .
   docker build --build-arg KRAWLER_TAG=$KRAWLER_TAG -f dockerfile.taf -t kalisio/k-taf:${IMAGE_TAG} .
+
 deploy:
   provider: script
   script: docker push kalisio/k-metar:${IMAGE_TAG} && docker push kalisio/k-taf:${IMAGE_TAG}
