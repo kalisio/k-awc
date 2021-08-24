@@ -1,7 +1,6 @@
 const krawler = require('@kalisio/krawler')
 const hooks = krawler.hooks
 const _ = require('lodash')
-const fs = require('fs')
 const path = require('path')
 
 const dbUrl = process.env.DB_URL || 'mongodb://127.0.0.1:27017/metar-taf'
@@ -201,14 +200,14 @@ module.exports = {
           indices: [
             [{ time: 1, 'properties.dataId': 1 }, { unique: true }],
             { 'properties.temperature': 1 },
-            { 'properties.dewppointTemperature': 1 },
+            { 'properties.dewpointTemperature': 1 },
             { 'properties.windSpeed': 1 },
             { 'properties.windDirection': 1 },
             { 'properties.windGust': 1 },
             { 'properties.cloudCover': 1 },
             { 'properties.visibility': 1 },
             { 'properties.dataId': 1, 'properties.temperature': 1, time: -1 },
-            { 'properties.dataId': 1, 'properties.dewppointTemperature': 1, time: -1 },
+            { 'properties.dataId': 1, 'properties.dewpointTemperature': 1, time: -1 },
             { 'properties.dataId': 1, 'properties.temperature': 1, time: -1 },
             { 'properties.dataId': 1, 'properties.windSpeed': 1, time: -1 },
             { 'properties.dataId': 1, 'properties.windDirection': 1, time: -1 },
