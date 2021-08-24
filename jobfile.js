@@ -17,7 +17,7 @@ const timePath = data === 'metar' ? 'properties.obsTime' : 'properties.issueTime
 // Create a custom hook to generate tasks
 let generateTasks = (options) => {
   return (hook) => {
-    let footprint = {
+    let footprintCollection = {
       type: 'FeatureCollection',
       'features': [] 
     }
@@ -31,7 +31,7 @@ let generateTasks = (options) => {
           const south=grid.bbox[1] + (j * cellHeight)
           const west=east + cellWidth
           const north=south + cellHeight
-          footprint.features.push({
+          footprintCollection.features.push({
             type: 'Feature',
             properties: {},
             geometry: {
@@ -51,9 +51,8 @@ let generateTasks = (options) => {
         }
       }
     })
-    // fs.writeFileSync('footprint.geojson', JSON.stringify(footprint, null, 4))
     hook.data.tasks = tasks
-    hook.data.footprint = footprint
+    hook.data.footprint = footprintCollection
     return hook
   }
 }
