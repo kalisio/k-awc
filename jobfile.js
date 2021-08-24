@@ -253,6 +253,7 @@ module.exports = {
           dataPath: 'data.footprint',
           store: 'fs'
         },
+        clearData: {},
         disconnectMongo: {
           clientPath: 'taskTemplate.client'
         },
