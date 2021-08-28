@@ -74,9 +74,9 @@ module.exports = {
           dataPath: 'data.mostRecentData',
           collection: 'metar-taf-' + collection,
           pipeline: [
-            { $sort: { 'properties.dataId': 1, time: 1 } },
+            { $sort: { 'properties.icao': 1, time: 1 } },
             { $group: {
-                _id: "$properties.dataId",
+                _id: "$properties.icao",
                 lastDate: { $last: "$time" }
               }
             }
@@ -97,7 +97,7 @@ module.exports = {
               const featureTime = new Date(_.get(feature, timePath)).getTime()
               let existingData = _.find(item.mostRecentData, (data) => {
                 const lastTime = data.lastDate.getTime()
-                return data._id === feature.id && lastTime === featureTime
+                return data._id === feature.properties.id && lastTime === featureTime
               })
               if (existingData === undefined) newData.push(feature)
             })
@@ -199,6 +199,7 @@ module.exports = {
           collection: 'metar-taf-' + collection,
           indices: [
             [{ time: 1, 'properties.dataId': 1 }, { unique: true }],
+            { time: 1, 'propertiess.icao': 1 },
             { 'properties.temperature': 1 },
             { 'properties.dewpointTemperature': 1 },
             { 'properties.windSpeed': 1 },
