@@ -6,12 +6,12 @@ const path = require('path')
 const dbUrl = process.env.DB_URL || 'mongodb://127.0.0.1:27017/metar-taf'
 const ttl = +process.env.TTL || (7 * 24 * 60 * 60)  // duration in seconds
 const data = process.env.DATA || 'metar'
-const footprint = process.env.FOOTPRINT || false
+const footprint = process.env.FOOTPRINT ? process.env.FOOTPRINT === 'true' : false
 
 // computed var
 const script = _.capitalize(data) + 'JSON.php'
 const collection = data === 'metar' ? 'observations' : 'forecasts'
-const timePath = data === 'metar' ? 'properties.obsTime' : 'properties.issueTime'
+const timePath = data === 'metar' ? 'properties.obsTime' : 'properties.validTimeFrom'
 
 // Create a custom hook to generate tasks
 let generateTasks = (options) => {
@@ -186,7 +186,7 @@ module.exports = {
           { 
             id: 'fs', 
             options: { 
-              path: path.join(__dirname, '..', 'output') 
+              path: __dirname
             } 
           }
         ],
@@ -250,7 +250,7 @@ module.exports = {
       },
       after: {
         writeJson: {
-          match: { predicate: () => { return footprint === true } },
+          match: { predicate: () => footprint },
           dataPath: 'data.footprint',
           store: 'fs'
         },
