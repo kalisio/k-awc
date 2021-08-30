@@ -99,7 +99,7 @@ module.exports = {
               const featureTime = new Date(_.get(feature, timePath)).getTime()
               let existingData = _.find(item.mostRecentData, (data) => {
                 const lastTime = data.lastDataDate.getTime()
-                return data.dataId === feature.id && featureTime > lasTime
+                return data.dataId === feature.id && featureTime > lastTime
               })
               if (existingData === undefined) newData.push(feature)
             })
