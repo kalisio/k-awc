@@ -18,7 +18,7 @@ All records are stored in [GeoJson](https://fr.wikipedia.org/wiki/GeoJSON) forma
 
 The job is executed according a specific cron expression. By default, every hours.
 
-## Implemententation
+## Implementation
 
 Because webservices return a limited amount of data based on the query bounding box, the job consists of a set of tasks which query the webservice according a given bounding box.
 The following illustrates the different bounding boxes used to defined the set of tasks to be executed:
