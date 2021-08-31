@@ -203,7 +203,7 @@ module.exports = {
           collection: 'metar-taf-' + collection,
           indices: [
             [{ time: 1, 'properties.dataId': 1 }, { unique: true }],
-            { 'propertiess.icao': 1 },
+            { 'properties.icao': 1 },
             { 'properties.temperature': 1 },
             { 'properties.dewpointTemperature': 1 },
             { 'properties.windSpeed': 1 },
