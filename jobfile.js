@@ -101,7 +101,10 @@ module.exports = {
                 const lastTime = data.lastDataDate.getTime()
                 return data.dataId === feature.id && featureTime <= lastTime
               })
-              if (existingData === undefined) newData.push(feature)
+              if (existingData === undefined) {
+                feature.properties.name = `${feature.properties.site} [${feature.properties.id}]`
+                newData.push(feature)
+              }
             })
             console.log(`found ${newData.length} new data out of ${item.data.features.length} obtained`)
             item.data = newData
@@ -114,7 +117,6 @@ module.exports = {
             mapping: {
               [timePath]: { path: 'time', delete: false },
               'id': 'properties.dataId',
-              'properties.site': 'properties.name',
               'properties.temp': 'properties.temperature',
               'properties.dewp': 'properties.dewpointTemperature',
               'properties.wspd': 'properties.windSpeed',
