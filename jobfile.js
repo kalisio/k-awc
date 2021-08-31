@@ -69,23 +69,6 @@ module.exports = {
   },
   hooks: {
     tasks: {
-      before: {
-        createMongoAggregation: {
-          dataPath: 'data.mostRecentData',
-          collection: 'metar-taf-' + collection,
-          pipeline: [
-            { $sort: { 'properties.icao': 1, time: 1 } },
-            { 
-              $group: {
-                _id: "$properties.icao",
-                dataId : { $last: '$properties.dataId' },
-                lastDataDate: { $last: "$time" }
-              }
-            }
-          ],
-          allowDiskUse: true
-        }
-      },
       after: {
         readJson: {},
         transformJson: {
@@ -94,25 +77,19 @@ module.exports = {
         },
         apply: {
           function: (item) => {
-            let newData = []
+            console.log(`${item.options.url}: found ${item.data.features.length} data`)
             _.forEach(item.data.features, (feature) => {
               const featureTime = new Date(_.get(feature, timePath)).getTime()
-              let existingData = _.find(item.mostRecentData, (data) => {
-                const lastTime = data.lastDataDate.getTime()
-                return data.dataId === feature.id && featureTime <= lastTime
-              })
-              if (existingData === undefined) {
-                feature.properties.name = `${feature.properties.site} [${feature.properties.id}]`
-                newData.push(feature)
-              }
+              feature.properties.key = `${feature.id}-${featureTime}`
+              feature.properties.name = `${feature.properties.site} [${feature.properties.id}]`
             })
-            console.log(`found ${newData.length} new data out of ${item.data.features.length} obtained`)
-            item.data = newData
           }
         },
-        writeData: {
-          hook: 'writeMongoCollection',
+        updateData: {
+          hook: 'updateMongoCollection',
           collection: 'metar-taf-' + collection,
+          filter: { 'properties.key': '<%= properties.key %>' },
+          upsert : true,
           transform: {
             mapping: {
               [timePath]: { path: 'time', delete: false },
@@ -202,7 +179,7 @@ module.exports = {
           clientPath: 'taskTemplate.client',
           collection: 'metar-taf-' + collection,
           indices: [
-            [{ time: 1, 'properties.dataId': 1 }, { unique: true }],
+            [{'properties.key': 1 }, { unique: true }],
             { 'properties.icao': 1 },
             { 'properties.temperature': 1 },
             { 'properties.dewpoint': 1 },
