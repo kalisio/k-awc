@@ -93,7 +93,6 @@ module.exports = {
           transform: {
             mapping: {
               [timePath]: { path: 'time', delete: false },
-              'id': 'properties.dataId',
               'properties.temp': 'properties.temperature',
               'properties.dewp': 'properties.dewpoint',
               'properties.wspd': 'properties.windSpeed',
@@ -104,7 +103,9 @@ module.exports = {
               'properties.id': 'properties.icao'
             },
             omit: [
-              'properties.data'
+              'id',
+              'properties.data',
+              'properties.site'
             ],
             unitMapping: { time: { asDate: 'utc' } } 
           },
