@@ -1,10 +1,9 @@
 import _ from 'lodash'
-import { fileURLToPath } from 'url'
-import { dirname } from 'path'
+import fs from 'fs-extra'
 import { hooks } from '@kalisio/krawler'
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const outputDir = './output'
+fs.ensureDirSync(outputDir)
 
 const dbUrl = process.env.DB_URL || 'mongodb://127.0.0.1:27017/metar-taf'
 const ttl = +process.env.TTL || (7 * 24 * 60 * 60)  // duration in seconds
@@ -169,7 +168,7 @@ export default {
           { 
             id: 'fs', 
             options: { 
-              path: __dirname
+              path: { path: outputDir }
             } 
           }
         ],
