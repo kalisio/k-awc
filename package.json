@@ -34,7 +34,6 @@
     "postversion": "git push origin --tags"
   },
   "dependencies": {
-    "fs-extra": "^10.1.0",
     "lodash": "^4.17.21"
   },
   "devDependencies": {
