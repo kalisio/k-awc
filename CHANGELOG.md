@@ -1,3 +1,5 @@
+Please refer to GitHub issues for changelog starting from v0.3: https://github.com/kalisio/k-metar-taf/issues.
+
 ### 0.2.0 (2023-03-09)
 
 ##### New Features
