@@ -83,6 +83,10 @@ export default {
               feature.properties.key = `${feature.id}-${featureTime}`
               feature.properties.name = `${feature.properties.site} [${feature.properties.id}]`
             })
+            // Ensure we get valid coordinates
+            item.data.features = item.data.features.filter(feature =>
+              _.isNumber(_.get(feature, 'geometry.coordinates[0]')) && _.isNumber(_.get(feature, 'geometry.coordinates[1]')))
+            console.log(`${item.options.url}: found ${item.data.features.length} valid data`)
           }
         },
         updateData: {
