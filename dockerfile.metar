@@ -7,7 +7,7 @@ FROM kalisio/krawler:${KRAWLER_TAG} AS krawler
 LABEL maintainer="Kalisio <contact@kalisio.xyz>"
 
 # Default environment variables
-ENV CRON="0 * * * * *"
+ENV CRON="0 */2 * * * *"
 
 # Install the job
 COPY --chown=node:node jobfile.metar.js package.json yarn.lock /opt/job/
