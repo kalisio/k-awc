@@ -5,6 +5,12 @@ const outputDir = './output'
 const dbUrl = process.env.DB_URL || 'mongodb://127.0.0.1:27017/metar-taf'
 const ttl = +process.env.TTL || (7 * 24 * 60 * 60)  // duration in seconds
 
+function toVisibility (value) {
+  if (value === '') return -1
+  let result = _.replace(value, '+', '')
+  return Math.ceil(_.toNumber(result) * 1.60934) * 1000
+}
+
 export default {
   id: 'metar',
   store: 'fs',
@@ -55,7 +61,7 @@ export default {
                     windDirection: _.toNumber(metar[7]),
                     windSpeed: _.toNumber(metar[8]),
                     windGust: _.toNumber(metar[9]),
-                    visibility: _.toNumber(metar[10]),
+                    visibility: toVisibility(metar[10]),
                     cover: metar[22]
                   }
                 })
