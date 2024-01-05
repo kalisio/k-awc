@@ -50,12 +50,12 @@ export default {
                     name: _.get(station, 'properties.site',''),
                     rawObs: metar[0],
                     icao: metar[1],
-                    temperature: metar[5],
-                    dewpoint: metar[6],
-                    windDirection: metar[7],
-                    windSpeed: metar[8],
-                    windGust: metar[9],
-                    visibility: metar[10],
+                    temperature: _.toNumber(metar[5]),
+                    dewpoint: _.toNumber(metar[6]),
+                    windDirection: _.toNumber(metar[7]),
+                    windSpeed: _.toNumber(metar[8]),
+                    windGust: _.toNumber(metar[9]),
+                    visibility: _.toNumber(metar[10]),
                     cover: metar[22]
                   }
                 })
