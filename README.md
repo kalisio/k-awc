@@ -7,7 +7,7 @@ A [Krawler](https://kalisio.github.io/krawler/) based service to download [METAR
 
 ## Description
 
-The **k-metar-taf** job allow to scrape **METAR** and **TAF** data using the [web services](https://www.aviationweather.gov/help/webservice) provided by the **Avioation Weather Center**. 
+The **k-metar-taf** job allow to scrape **METAR** and **TAF** data using the [api](https://aviationweather.gov/data/api/) provided by the **Avioation Weather Center**. 
 
 The downloaded data are stored within a [MongoDB](https://www.mongodb.com/) database and more precisely in 3 collections:
 * `metar-taf-observations` that stores the **METAR** data
@@ -33,8 +33,6 @@ The subdivision is irregular in order to define smaller bounding boxes on areas 
 |--- | --- |
 | `DB_URL` | The mongoDB database URL. The default value is `mongodb://127.0.0.1:27017/metar-taf` |
 | `TTL` | The data time to live. It must be expressed in seconds and the default value is `604 800` (7 days) |
-| `DATA` | The data to be scrapped. It must be either `metar` or `taf`. The default value is `metar` |
-| `FOOTPRINT` | Writes the footprint of the different queries as a **GeoJSON** file. The default value is `false`. |
 | `DEBUG` | Enables debug output. Set it to `krawler*` to enable full output. By default it is undefined. |
 
 ## Deployment
