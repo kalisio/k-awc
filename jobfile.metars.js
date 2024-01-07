@@ -6,9 +6,7 @@ const dbUrl = process.env.DB_URL || 'mongodb://127.0.0.1:27017/metar-taf'
 const ttl = +process.env.TTL || (7 * 24 * 60 * 60)  // duration in seconds
 
 function toVisibility (value) {
-  if (value === '') return -1
-  let result = _.replace(value, '+', '')
-  return Math.ceil(_.toNumber(result) * 1.60934) * 1000
+  
 }
 
 export default {
@@ -42,29 +40,37 @@ export default {
             let errors = 0
             for (let i = 6; i < item.data.length; i++) {
               const metar = item.data[i]
-              const icaoId = metar[1]
+              const icaoId = `#${metar[1]}`
               const station = _.find(item.stations, station => {
                 return _.get(station, 'properties.icao') === icaoId
               })
               if (station) {
-                metars.push({
+                let feature = {
                   type: 'Feature',
                   time: metar[2],
                   geometry: station.geometry,
                   properties: {
                     key: `${metar[1]}-${metar[2]}`,
-                    name: _.get(station, 'properties.site',''),
-                    rawObs: metar[0],
-                    icao: metar[1],
+                    name: _.get(station, 'properties.site', metar[1]),
+                    icao: icaoId,
                     temperature: _.toNumber(metar[5]),
                     dewpoint: _.toNumber(metar[6]),
                     windDirection: _.toNumber(metar[7]),
                     windSpeed: _.toNumber(metar[8]),
                     windGust: _.toNumber(metar[9]),
-                    visibility: toVisibility(metar[10]),
-                    cover: metar[22]
+                    rawObs: metar[0],
                   }
-                })
+                }
+                // visibility
+                if (!_.isEmpty(metar[10])) {
+                  let visiblity = Math.ceil(_.toNumber(_.replace(metar[10], '+', '')) * 1.60934) * 1000
+                  _.set(feature, 'properties.visibility',visiblity)
+                }
+                // cloud cover
+                if (!_.isEmpty(metar[22])) {
+                  _.set(feature, 'properties.cloudCover',metar[22])
+                }
+                metars.push(feature)
               } else {
                 console.warn(`<!> ${i}th element has invalid icao code: ${icaoId}`)
                 errors++

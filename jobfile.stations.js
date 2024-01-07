@@ -40,7 +40,7 @@ export default {
                     type: 'Point',
                     coordinates: [station.lon, station.lat, station.elev]
                   },
-                  properties: Object.assign({ icao: station.icaoId, name: station.site }, _.omit(station, ['lat', 'lon', 'elev']))
+                  properties: Object.assign({ icao: `#${station.icaoId}`, name: station.site }, _.omit(station, ['lat', 'lon', 'elev']))
                 })
               }
             })
