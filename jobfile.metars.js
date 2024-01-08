@@ -58,12 +58,12 @@ export default {
                     windDirection: _.toNumber(metar[7]),
                     windSpeed: _.toNumber(metar[8]),
                     windGust: _.toNumber(metar[9]),
-                    rawObs: metar[0],
+                    rawOb: metar[0],
                   }
                 }
                 // visibility
                 if (!_.isEmpty(metar[10])) {
-                  let visiblity = Math.ceil(_.toNumber(_.replace(metar[10], '+', '')) * 1.60934) * 1000
+                  let visiblity = Math.ceil(_.toNumber(_.replace(metar[10], '+', '')) / 1000) * 1000
                   _.set(feature, 'properties.visibility',visiblity)
                 }
                 // cloud cover
