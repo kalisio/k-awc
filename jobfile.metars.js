@@ -2,15 +2,11 @@ import _ from 'lodash'
 
 const outputDir = './output'
 
-const dbUrl = process.env.DB_URL || 'mongodb://127.0.0.1:27017/metar-taf'
-const ttl = +process.env.TTL || (7 * 24 * 60 * 60)  // duration in seconds
-
-function toVisibility (value) {
-  
-}
+const dbUrl = process.env.DB_URL || 'mongodb://127.0.0.1:27017/awc'
+const ttl = +process.env.TTL || (30 * 24 * 60 * 60)  // duration in seconds
 
 export default {
-  id: 'metar',
+  id: 'metars',
   store: 'fs',
   options: {
     workersLimit: 1
@@ -81,7 +77,7 @@ export default {
           }
         },
         updateMongoCollection: {
-          collection: 'metar-taf-observations',
+          collection: 'awc-metars',
           filter: { 'properties.key': '<%= properties.key %>' },
           upsert : true,
           transform: {
@@ -110,7 +106,7 @@ export default {
         },
         createMongoCollection: {
           clientPath: 'taskTemplate.client',
-          collection: 'metar-taf-observations',
+          collection: 'awc-metars',
           indices: [
             [{'properties.key': 1 }, { unique: true }],
             { 'properties.icao': 1 },
@@ -135,7 +131,7 @@ export default {
         },
         readMongoCollection: {
           clientPath: 'taskTemplate.client',
-          collection: 'metar-taf-stations',
+          collection: 'awc-stations',
           dataPath: 'data.taskTemplate.stations'
         }
       },

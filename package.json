@@ -1,8 +1,8 @@
 {
-  "name": "k-metar-taf",
+  "name": "k-awc",
   "description": "",
   "version": "0.5.1",
-  "homepage": "https://github.com/kalisio/k-metar-taf",
+  "homepage": "https://github.com/kalisio/k-awc",
   "type": "module",
   "keywords": [
     "krawler",
@@ -15,7 +15,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git://github.com/kalisio/k-metar-taf.git"
+    "url": "git://github.com/kalisio/k-awc.git"
   },
   "author": {
     "name": "Kalisio",
@@ -23,7 +23,7 @@
   },
   "contributors": [],
   "bugs": {
-    "url": "https://github.com/kalisio/k-metar-taf/issues"
+    "url": "https://github.com/kalisio/k-awc/issues"
   },
   "scripts": {
     "test": "echo \"Warning: no test specified\"",

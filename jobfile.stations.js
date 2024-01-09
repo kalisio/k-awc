@@ -2,10 +2,10 @@ import _ from 'lodash'
 
 const outputDir = './output'
 
-const dbUrl = process.env.DB_URL || 'mongodb://127.0.0.1:27017/metar-taf'
+const dbUrl = process.env.DB_URL || 'mongodb://127.0.0.1:27017/awc'
 
 export default {
-  id: 'metar-taf',
+  id: 'stations',
   store: 'fs',
   options: {
     workersLimit: 1
@@ -49,7 +49,7 @@ export default {
           }
         },
         updateMongoCollection: {
-          collection: 'metar-taf-stations',
+          collection: 'awc-stations',
           filter: { 'properties.icao': '<%= properties.icao %>' },
           upsert : true,
           chunkSize: 512
@@ -75,7 +75,7 @@ export default {
         },
         createMongoCollection: {
           clientPath: 'taskTemplate.client',
-          collection: 'metar-taf-stations',
+          collection: 'awc-stations',
           indices: [
             [{ 'properties.icao': 1 }, { unique: true }],
             { geometry: '2dsphere' }                                                                                                              

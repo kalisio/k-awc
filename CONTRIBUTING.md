@@ -6,7 +6,7 @@
 
 Before creating an issue please make sure you have checked out the docs, you might want to also try searching Github. It's pretty likely someone has already asked a similar question.
 
-Issues can be reported in the [issue tracker](https://github.com/kalisio/k-metar-taf/issues).
+Issues can be reported in the [issue tracker](https://github.com/kalisio/k-awc/issues).
 
 ### Pull Requests
 
