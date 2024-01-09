@@ -1,4 +1,4 @@
-# k-mawc
+# k-awc
 
 [![Latest Release](https://img.shields.io/github/v/tag/kalisio/k-awc?sort=semver&label=latest)](https://github.com/kalisio/k-awc/releases)
 [![Build Status](https://app.travis-ci.com/kalisio/k-awc.svg?branch=master)](https://app.travis-ci.com/kalisio/k-awc)
