@@ -14,15 +14,17 @@ WORKSPACE_DIR="$(dirname "$ROOT_DIR")"
 
 PUBLISH=false
 JOB_VARIANT=
-while getopts "prv:" option; do
+WORKFLOW_JOB_ID=
+while getopts "pr:v:" option; do
     case $option in
         p) # publish
             PUBLISH=true
             ;;
         r) # report outcome to slack
             load_env_files "$WORKSPACE_DIR/development/common/SLACK_WEBHOOK_JOBS.enc.env"
-            trap 'slack_ci_report "$ROOT_DIR" "$JOB_ID $JOB_VARIANT" "$?" "$SLACK_WEBHOOK_JOBS"' EXIT
-            ;;
+            WORKFLOW_JOB_ID=$OPTARG
+            trap 'slack_ci_report "$ROOT_DIR" "$WORKFLOW_JOB_ID $JOB_VARIANT" "$?" "$SLACK_WEBHOOK_JOBS"' EXIT
+            ;;      
         v) # job variant
             JOB_VARIANT=$OPTARG
             ;;
@@ -30,9 +32,6 @@ while getopts "prv:" option; do
             ;;
     esac
 done
-
-shift $((OPTIND-1))
-JOB_ID="$1"
 
 ## Init workspace
 ##
