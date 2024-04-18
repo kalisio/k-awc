@@ -3,9 +3,12 @@ on: [ push ]
 
 jobs:
   build_stations:
-    name: Build stations
+    name: Build
     if: ${{ !contains(github.event.head_commit.message, 'skip build') }}
     runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        variant: [stations, metars]
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -20,23 +23,5 @@ jobs:
       - name: Build job
         env:
           SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
-        run: bash ./scripts/build.sh -p -r ${{ github.job }}
-  build_metars:
-    name: Build metars
-    if: ${{ !contains(github.event.head_commit.message, 'skip build') }}
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-        with:
-          submodules: true
-      - name: Init runner
-        run: bash ./scripts/init_runner.sh ${{ github.job }}
-      - name: Setup workspace
-        env:
-          GITHUB_DEVELOPMENT_PAT: ${{ secrets.GH_DEVELOPMENT_PAT }}
-        run: bash ./scripts/setup_workspace.sh
-      - name: Build job
-        env:
-          SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
-        run: bash ./scripts/build.sh -p -r ${{ github.job }}
+        run: bash ./scripts/build.sh -p -r ${{ github.job }} ${{ matrix.variant }}
+ 

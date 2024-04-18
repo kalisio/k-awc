@@ -13,7 +13,7 @@ WORKSPACE_DIR="$(dirname "$ROOT_DIR")"
 ##
 
 PUBLISH=false
-while getopts "pr" option; do
+while getopts "prv" option; do
     case $option in
         p) # publish
             PUBLISH=true
@@ -52,7 +52,7 @@ load_value_files "$WORKSPACE_DIR/development/common/KALISIO_DOCKERHUB_PASSWORD.e
 ## Build container
 ##
 
-JOB_VARIANT=$(cut -d '_' -f 2 <<< "$JOB_ID")
+JOB_VARIANT="$2"
 IMAGE_NAME="kalisio/$JOB"
 if [[ -z "$GIT_TAG" ]]; then
     IMAGE_TAG="$JOB_VARIANT-latest"
