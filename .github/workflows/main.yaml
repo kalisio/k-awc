@@ -1,4 +1,4 @@
-name: Build
+name: ci
 on: [ push ]
 
 jobs:
@@ -17,7 +17,7 @@ jobs:
         env:
           GITHUB_DEVELOPMENT_PAT: ${{ secrets.GH_DEVELOPMENT_PAT }}
         run: bash ./scripts/setup_workspace.sh
-      - name: Build app
+      - name: Build job
         env:
           SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
         run: bash ./scripts/build.sh -p -r ${{ github.job }}
@@ -36,7 +36,7 @@ jobs:
         env:
           GITHUB_DEVELOPMENT_PAT: ${{ secrets.GH_DEVELOPMENT_PAT }}
         run: bash ./scripts/setup_workspace.sh
-      - name: Build app
+      - name: Build job
         env:
           SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
         run: bash ./scripts/build.sh -p -r ${{ github.job }}
