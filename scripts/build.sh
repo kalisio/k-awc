@@ -13,7 +13,8 @@ WORKSPACE_DIR="$(dirname "$ROOT_DIR")"
 ##
 
 PUBLISH=false
-while getopts "prv" option; do
+JOB_VARIANT=
+while getopts "prv:" option; do
     case $option in
         p) # publish
             PUBLISH=true
@@ -21,6 +22,9 @@ while getopts "prv" option; do
         r) # report outcome to slack
             load_env_files "$WORKSPACE_DIR/development/common/SLACK_WEBHOOK_JOBS.enc.env"
             trap 'slack_ci_report "$ROOT_DIR" "$JOB_ID $JOB_VARIANT" "$?" "$SLACK_WEBHOOK_JOBS"' EXIT
+            ;;
+        v) # job variant
+            JOB_VARIANT=$OPTARG
             ;;
         *)
             ;;
@@ -52,7 +56,6 @@ load_value_files "$WORKSPACE_DIR/development/common/KALISIO_DOCKERHUB_PASSWORD.e
 ## Build container
 ##
 
-JOB_VARIANT="$2"
 IMAGE_NAME="kalisio/$JOB"
 if [[ -z "$GIT_TAG" ]]; then
     IMAGE_TAG="$JOB_VARIANT-latest"
@@ -67,7 +70,7 @@ begin_group "Building container ..."
 docker login --username "$KALISIO_DOCKERHUB_USERNAME" --password-stdin < "$KALISIO_DOCKERHUB_PASSWORD"
 # DOCKER_BUILDKIT is here to be able to use Dockerfile specific dockerginore (job.Dockerfile.dockerignore)
 DOCKER_BUILDKIT=1 docker build \
-    --build-arg KRAWLER_TAG=$KRAWLER_TAG \
+    --build-arg KRAWLER_TAG="$KRAWLER_TAG" \
     -f dockerfile."$JOB_VARIANT" \
     -t "$IMAGE_NAME:$IMAGE_TAG" \
     "$WORKSPACE_DIR/$JOB"
