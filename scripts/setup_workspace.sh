@@ -39,7 +39,7 @@ else
     if [ -n "$WORKSPACE_TAG" ] || [ -n "$WORKSPACE_BRANCH" ]; then
         GIT_OPS="$GIT_OPS --branch ${WORKSPACE_TAG:-$WORKSPACE_BRANCH}"
     fi
-    git clone --depth 1 $GIT_OPS "$GITHUB_URL/kalisio/k-rte.git" "$WORKSPACE_DIR/k-rte"
+    git clone --depth 1 $GIT_OPS "$GITHUB_URL/kalisio/k-awc.git" "$WORKSPACE_DIR/k-awc"
 
     DEVELOPMENT_REPO_URL="$GITHUB_URL/kalisio/development.git"
 
