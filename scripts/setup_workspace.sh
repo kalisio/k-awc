@@ -29,7 +29,7 @@ else
     DEVELOPMENT_REPO_URL="$GITHUB_URL/kalisio/development.git"
 
     # Clone project in the workspace
-    git_shallow_clone "$GITHUB_URL/kalisio/k-icos.git" "$WORKSPACE_DIR/k-icos" "${WORKSPACE_TAG:-${WORKSPACE_BRANCH:-}}"
+    git_shallow_clone "$GITHUB_URL/kalisio/k-awc.git" "$WORKSPACE_DIR/k-awc" "${WORKSPACE_TAG:-${WORKSPACE_BRANCH:-}}"
 fi
 
 setup_job_workspace "$WORKSPACE_DIR" "$DEVELOPMENT_REPO_URL"
