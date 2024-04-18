@@ -21,8 +21,8 @@ while getopts "pr:v:" option; do
             PUBLISH=true
             ;;
         r) # report outcome to slack
-            load_env_files "$WORKSPACE_DIR/development/common/SLACK_WEBHOOK_JOBS.enc.env"
             WORKFLOW_JOB_ID=$OPTARG
+            load_env_files "$WORKSPACE_DIR/development/common/SLACK_WEBHOOK_JOBS.enc.env"
             trap 'slack_ci_report "$ROOT_DIR" "$WORKFLOW_JOB_ID $JOB_VARIANT" "$?" "$SLACK_WEBHOOK_JOBS"' EXIT
             ;;      
         v) # job variant
