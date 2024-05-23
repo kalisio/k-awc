@@ -1,7 +1,10 @@
 # k-awc
 
 [![Latest Release](https://img.shields.io/github/v/tag/kalisio/k-awc?sort=semver&label=latest)](https://github.com/kalisio/k-awc/releases)
-[![ci](https://github.com/kalisio/k-awc/actions/workflows/main.yaml/badge.svg)](https://github.com/kalisio/k-awc/actions/workflows/main.yaml)
+[![CI](https://github.com/kalisio/k-awc/actions/workflows/main.yaml/badge.svg)](https://github.com/kalisio/k-awc/actions/workflows/main.yaml)
+[![Code Climate](https://codeclimate.com/github/kalisio/k-awc/badges/gpa.svg)](https://codeclimate.com/github/kalisio/k-awc)
+[![Test Coverage](https://codeclimate.com/github/kalisio/k-awc/badges/coverage.svg)](https://codeclimate.com/github/kalisio/k-awc/coverage)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A [Krawler](https://kalisio.github.io/krawler/) based service to download [METAR](https://en.wikipedia.org/wiki/METAR) and [TAF](https://en.wikipedia.org/wiki/Terminal_aerodrome_forecast) data from the [Aviation Weather Center](https://www.aviationweather.gov/).
 
