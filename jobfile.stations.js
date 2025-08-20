@@ -1,8 +1,8 @@
 import _ from 'lodash'
+import winston from 'winston'
 
-const outputDir = './output'
-
-const dbUrl = process.env.DB_URL || 'mongodb://127.0.0.1:27017/awc'
+const DB_URL = process.env.DB_URL || 'mongodb://127.0.0.1:27017/awc'
+const OUTPUT_DIR = './output'
 
 export default {
   id: 'stations',
@@ -44,10 +44,10 @@ export default {
                 })
               }
             })
-            console.log('<i> Found', stations.length, 'stations')
             item.data = stations
           }
         },
+        log: (logger, item) => logger.info(`${_.size(item.data)} stations found.`),
         updateMongoCollection: {
           collection: 'awc-stations',
           filter: { 'properties.icao': '<%= properties.icao %>' },
@@ -64,12 +64,19 @@ export default {
           { 
             id: 'fs', 
             options: { 
-              path: outputDir
+              path: OUTPUT_DIR
             } 
           }
         ],
+        createLogger: {
+          loggerPath: 'taskTemplate.logger',
+          Console: {
+            format: winston.format.printf(log => winston.format.colorize().colorize(log.level, `${log.level}: ${log.message}`)),
+            level: 'verbose'
+          }
+        },
         connectMongo: {
-          url: dbUrl,
+          url: DB_URL,
           // Required so that client is forwarded from job to tasks
           clientPath: 'taskTemplate.client'
         },
@@ -87,12 +94,18 @@ export default {
         disconnectMongo: {
           clientPath: 'taskTemplate.client'
         },
+        removeLogger: {
+          loggerPath: 'taskTemplate.logger'
+        },        
         removeStores: ['memory', 'fs']
       },
       error: {
         disconnectMongo: {
           clientPath: 'taskTemplate.client'
         },
+        removeLogger: {
+          loggerPath: 'taskTemplate.logger'
+        },        
         removeStores: ['memory', 'fs']
       }
     }

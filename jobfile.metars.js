@@ -1,9 +1,9 @@
 import _ from 'lodash'
+import winston from 'winston'
 
-const outputDir = './output'
-
-const dbUrl = process.env.DB_URL || 'mongodb://127.0.0.1:27017/awc'
-const ttl = +process.env.TTL || (30 * 24 * 60 * 60)  // duration in seconds
+const TTL = +process.env.TTL || (30 * 24 * 60 * 60)  // duration in seconds
+const DB_URL = process.env.DB_URL || 'mongodb://127.0.0.1:27017/awc'
+const OUTPUT_DIR = './output'
 
 export default {
   id: 'metars',
@@ -72,10 +72,10 @@ export default {
                 errors++
               }
             }
-            console.log(`<i> Found ${item.data.length - errors} valid metars over ${item.data.length}`)
             item.data = metars
           }
         },
+        log: (logger, item) => logger.info(`${_.size(item.data)} metars found.`),
         updateMongoCollection: {
           collection: 'awc-metars',
           filter: { 'properties.key': '<%= properties.key %>' },
@@ -90,17 +90,27 @@ export default {
     },
     jobs: {
       before: {
+        printEnv: {
+          TTL: TTL
+        },
         createStores: [
           { id: 'memory' },
           { 
             id: 'fs', 
             options: { 
-              path: outputDir
+              path: OUTPUT_DIR
             } 
           }
         ],
+        createLogger: {
+          loggerPath: 'taskTemplate.logger',
+          Console: {
+            format: winston.format.printf(log => winston.format.colorize().colorize(log.level, `${log.level}: ${log.message}`)),
+            level: 'verbose'
+          }
+        },        
         connectMongo: {
-          url: dbUrl,
+          url: DB_URL,
           // Required so that client is forwarded from job to tasks
           clientPath: 'taskTemplate.client'
         },
@@ -125,7 +135,7 @@ export default {
             { 'properties.windGust': 1 },
             { 'properties.cloudCover': 1 },
             { 'properties.visibility': 1 },
-            [{ time: 1 }, { expireAfterSeconds: ttl }], // days in s
+            [{ time: 1 }, { expireAfterSeconds: TTL }], // days in s
             { geometry: '2dsphere' }                                                                                                              
           ],
         },
@@ -140,12 +150,18 @@ export default {
         disconnectMongo: {
           clientPath: 'taskTemplate.client'
         },
+        removeLogger: {
+          loggerPath: 'taskTemplate.logger'
+        },         
         removeStores: ['memory', 'fs']
       },
       error: {
         disconnectMongo: {
           clientPath: 'taskTemplate.client'
         },
+        removeLogger: {
+          loggerPath: 'taskTemplate.logger'
+        },         
         removeStores: ['memory', 'fs']
       }
     }
