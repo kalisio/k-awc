@@ -8,7 +8,7 @@ const METARS_COLLECTION = 'awc-metars'
 const OUTPUT_DIR = './output'
 
 export default {
-  id: 'metars',
+  id: 'awc-metars',
   store: 'fs',
   options: {
     workersLimit: 1

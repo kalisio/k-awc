@@ -6,7 +6,7 @@ const STATIONS_COLLECTION = 'awc-stations'
 const OUTPUT_DIR = './output'
 
 export default {
-  id: 'stations',
+  id: 'awc-stations',
   store: 'fs',
   options: {
     workersLimit: 1
