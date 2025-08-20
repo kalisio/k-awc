@@ -2,6 +2,7 @@ import _ from 'lodash'
 import winston from 'winston'
 
 const DB_URL = process.env.DB_URL || 'mongodb://127.0.0.1:27017/awc'
+const STATIONS_COLLECTION = 'awc-stations'
 const OUTPUT_DIR = './output'
 
 export default {
@@ -49,7 +50,7 @@ export default {
         },
         log: (logger, item) => logger.info(`${_.size(item.data)} stations found.`),
         updateMongoCollection: {
-          collection: 'awc-stations',
+          collection: STATIONS_COLLECTION,
           filter: { 'properties.icao': '<%= properties.icao %>' },
           upsert : true,
           chunkSize: 512
@@ -82,7 +83,7 @@ export default {
         },
         createMongoCollection: {
           clientPath: 'taskTemplate.client',
-          collection: 'awc-stations',
+          collection: STATIONS_COLLECTION,
           indices: [
             [{ 'properties.icao': 1 }, { unique: true }],
             { geometry: '2dsphere' }                                                                                                              

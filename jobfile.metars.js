@@ -3,6 +3,8 @@ import winston from 'winston'
 
 const TTL = +process.env.TTL || (30 * 24 * 60 * 60)  // duration in seconds
 const DB_URL = process.env.DB_URL || 'mongodb://127.0.0.1:27017/awc'
+const STATIONS_COLLECTION = 'awc-stations'
+const METARS_COLLECTION = 'awc-metars'
 const OUTPUT_DIR = './output'
 
 export default {
@@ -77,7 +79,7 @@ export default {
         },
         log: (logger, item) => logger.info(`${_.size(item.data)} metars found.`),
         updateMongoCollection: {
-          collection: 'awc-metars',
+          collection: METARS_COLLECTION,
           filter: { 'properties.key': '<%= properties.key %>' },
           upsert : true,
           transform: {
@@ -116,7 +118,7 @@ export default {
         },
         createMongoCollection: {
           clientPath: 'taskTemplate.client',
-          collection: 'awc-metars',
+          collection: METARS_COLLECTION,
           indices: [
             [{'properties.key': 1 }, { unique: true }],
             { 'properties.icao': 1 },
@@ -141,7 +143,7 @@ export default {
         },
         readMongoCollection: {
           clientPath: 'taskTemplate.client',
-          collection: 'awc-stations',
+          collection: STATIONS_COLLECTION,
           dataPath: 'data.taskTemplate.stations'
         }
       },
