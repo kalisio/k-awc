@@ -30,7 +30,7 @@ export default {
         readCSV: {
           store: 'fs',          
           key: 'tafs.csv',
-          // skipFirstLines: 5, still not working with the latest release of Papaparses
+          skipFirstNLines: 6
         },
         apply: {
           function: (item) => {
