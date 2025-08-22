@@ -11,11 +11,7 @@ THIS_DIR=$(dirname "$THIS_FILE")
 
 ### Github Actions
 
-init_github_run_tests() {
-    install_reqs age sops nvm node20 mongo7
-}
-
-init_github_build_job() {
+init_github_build() {
     install_reqs age sops
 }
 
