@@ -38,4 +38,4 @@ done
 ## Run tests
 ##
 
-./run_jobs.sh
+bash ./scripts/run_jobs.sh
