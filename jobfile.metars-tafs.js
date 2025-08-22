@@ -4,82 +4,85 @@ import winston from 'winston'
 const TTL = +process.env.TTL || (30 * 24 * 60 * 60)  // duration in seconds
 const DB_URL = process.env.DB_URL || 'mongodb://127.0.0.1:27017/awc'
 const STATIONS_COLLECTION = 'awc-stations'
-const TAFS_COLLECTION = 'awc-tafs'
+const DATA = process.env.DATA || 'metars'
+const DATA_COLLECTION = `awc-${DATA}`
 const OUTPUT_DIR = './output'
 
 export default {
-  id: 'awc-tafs',
+  id: `awc-${DATA}`,
   store: 'fs',
   options: {
     workersLimit: 1
   },
   tasks: [{
-    id: 'tafs.gz',
+    id: `${DATA}.gz`,
     type: 'http',
     options: {
-      url: `https://aviationweather.gov/data/cache/tafs.cache.csv.gz`
+      url: `https://aviationweather.gov/data/cache/${DATA}.cache.csv.gz`
     }
   }],
   hooks: {
     tasks: {
       after: {
         gunzipFromStore: {
-          input: { store: 'fs', key: 'tafs.gz' },
-          output: { store: 'fs', key: 'tafs.csv' }
+          input: { store: 'fs', key: `${DATA}.gz` },
+          output: { store: 'fs', key: `${DATA}.csv` }
         },
         readCSV: {
           store: 'fs',          
-          key: 'tafs.csv',
+          key: `${DATA}.csv`,
           skipFirstNLines: 6
         },
         apply: {
           function: (item) => {
-            let tafs = []
+            if (_.isEmpty(item.data)) return
+            let features = []
             let errors = 0
-            for (let i = 0; i < item.data.length; i++) {
-              const taf = item.data[i]
-              const icaoId = `#${taf[1]}`
-              const station = _.find(item.stations, station => {
-                return _.get(station, 'properties.icao') === icaoId
-              })
+            let i = 0
+            for (const data of item.data) {
+                i++
+                const icaoId = `#${data[1]}`
+                const station = _.find(item.stations, (station) => {
+                  return _.get(station, 'properties.icao') === icaoId
+                })
               if (station) {
                 let feature = {
                   type: 'Feature',
-                  time: taf[2],
+                  time: data[2],
                   geometry: station.geometry,
                   properties: {
-                    key: `${taf[1]}-${taf[2]}`,
-                    name: _.get(station, 'properties.site', taf[1]),
+                    key: `${data[1]}-${data[2]}`,
+                    name: _.get(station, 'properties.site', data[1]),
                     icao: icaoId,
-                    temperature: _.toNumber(taf[5]),
-                    dewpoint: _.toNumber(taf[6]),
-                    windDirection: _.toNumber(taf[7]),
-                    windSpeed: _.toNumber(taf[8]),
-                    windGust: _.toNumber(taf[9]),
-                    rawOb: taf[0],
+                    temperature: _.toNumber(data[5]),
+                    dewpoint: _.toNumber(data[6]),
+                    windDirection: _.toNumber(data[7]),
+                    windSpeed: _.toNumber(data[8]),
+                    windGust: _.toNumber(data[9]),
+                    rawOb: data[0],
                   }
                 }
                 // visibility
-                if (!_.isEmpty(taf[10])) {
-                  let visiblity = Math.ceil(_.toNumber(_.replace(taf[10], '+', '')) / 1000) * 1000
+                if (!_.isEmpty(data[10])) {
+                  let visiblity = Math.ceil(_.toNumber(_.replace(data[10], '+', '')) / 1000) * 1000
                   _.set(feature, 'properties.visibility',visiblity)
                 }
                 // cloud cover
-                if (!_.isEmpty(taf[22])) {
-                  _.set(feature, 'properties.cloudCover',taf[22])
+                if (!_.isEmpty(data[22])) {
+                  _.set(feature, 'properties.cloudCover',data[22])
                 }
-                tafs.push(feature)
+                features.push(feature)
               } else {
                 console.warn(`<!> ${i}th element has invalid icao code: ${icaoId}`)
                 errors++
               }
             }
-            item.data = tafs
+            item.data = features
           }
         },
-        log: (logger, item) => logger.info(`${_.size(item.data)} tafs found.`),
+        log: (logger, item) => logger.info(`${_.size(item.data)} ${DATA} found.`),
         updateMongoCollection: {
-          collection: TAFS_COLLECTION,
+          collection: DATA_COLLECTION,
           filter: { 'properties.key': '<%= properties.key %>' },
           upsert : true,
           transform: {
@@ -93,7 +96,8 @@ export default {
     jobs: {
       before: {
         printEnv: {
-          TTL: TTL
+          TTL: TTL,
+          DATA: DATA
         },
         createStores: [
           { id: 'memory' },
@@ -113,12 +117,11 @@ export default {
         },        
         connectMongo: {
           url: DB_URL,
-          // Required so that client is forwarded from job to tasks
           clientPath: 'taskTemplate.client'
         },
         createMongoCollection: {
           clientPath: 'taskTemplate.client',
-          collection: TAFS_COLLECTION,
+          collection: DATA_COLLECTION,
           indices: [
             [{'properties.key': 1 }, { unique: true }],
             { 'properties.icao': 1 },
