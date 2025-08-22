@@ -96,8 +96,8 @@ export default {
     jobs: {
       before: {
         printEnv: {
-          DATA: DATA,
-          TTL: TTL
+          DATA,
+          TTL
         },
         createStores: [
           { id: 'memory' },
