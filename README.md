@@ -36,7 +36,7 @@ As far as possible, jobs use the [cache files](https://aviationweather.gov/data/
 
 | Variable | Description |
 |--- | --- |
-| `DATA` | The type of weather dataset to process (`metars`, `tafs`). The default value is metars. |
+| `DATA` | The type of weather dataset to process (metars, tafs). `The default value is metars.` |
 | `DB_URL` | The mongoDB database URL. The default value is `mongodb://127.0.0.1:27017/awc` |
 | `TTL` | The data time to live. It must be expressed in seconds and the default value is `2592000` (30 days) |
 | `DEBUG` | Enables debug output. Set it to `krawler*` to enable full output. By default it is undefined. |
