@@ -9,7 +9,7 @@ const DATA_COLLECTION = `awc-${DATA}`
 const OUTPUT_DIR = './output'
 
 export default {
-  id: `awc-${DATA}`,
+  id: `awc-metars-tafs`,
   store: 'fs',
   options: {
     workersLimit: 1
@@ -96,8 +96,8 @@ export default {
     jobs: {
       before: {
         printEnv: {
-          TTL: TTL,
-          DATA: DATA
+          DATA: DATA,
+          TTL: TTL
         },
         createStores: [
           { id: 'memory' },
