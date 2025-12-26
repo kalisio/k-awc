@@ -15,12 +15,8 @@ WORKSPACE_DIR="$(dirname "$ROOT_DIR")"
 PUBLISH=false
 JOB_VARIANT=
 WORKFLOW_JOB_ID=
-RUN_SONAR=false
-while getopts "spr:v:" option; do
+while getopts "pr:v:" option; do
     case $option in
-        s) # enable SonarQube analysis and publish code quality & coverage results
-            RUN_SONAR=true
-            ;;
         p) # publish
             PUBLISH=true
             ;;
