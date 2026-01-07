@@ -2,8 +2,8 @@ name: ci
 on:
   push:
   workflow_dispatch:
-    build:
-      run_tests:
+    inputs:
+      build:
         description: "Build"
         default: false
         required: false
