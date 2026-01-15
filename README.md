@@ -9,7 +9,7 @@ A [Krawler](https://kalisio.github.io/krawler/) based service to download [METAR
 
 ## Description
 
-The **k-awc** jobs allow to scrape data using the [api](https://aviationweather.gov/data/api/) provided by the **Aviation Weather Center**. 
+The **k-awc** jobs allow to scrape data using the [api](https://aviationweather.gov/data/api/) provided by the **Aviation Weather Center**.
 
 The downloaded data are stored within a [MongoDB](https://www.mongodb.com/) database and more precisely in 3 collections:
 * `awc-metars` that stores the **METAR** data
@@ -50,12 +50,10 @@ We personally use [Kargo](https://kalisio.github.io/kargo/) to deploy the servic
 
 Please refer to [contribution section](./CONTRIBUTING.md) for more details.
 
-## Authors
-
-This project is sponsored by 
-
-![Kalisio](https://s3.eu-central-1.amazonaws.com/kalisioscope/kalisio/kalisio-logo-black-256x84.png)
-
 ## License
 
-This project is licensed under the MIT License - see the [license file](./LICENSE) for details
+Licensed under the [MIT license](LICENSE).
+
+Copyright (c) 2017-20xx [Kalisio](https://kalisio.com)
+
+[![Kalisio](https://kalisio.github.io/kalisioscope/kalisio/kalisio-logo-black-256x84.png)](https://kalisio.com)
